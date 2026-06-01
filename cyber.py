@@ -38,7 +38,7 @@ if url_input:
         found_keywords = [word for word in phishing_keywords if word in url.lower()]
         
         if found_keywords:
-            st.error(f"🚨 تحذيف عالي الخطورة: الرابط يحتوي على كلمات مشبوهة تستخدم في التصيد: {', '.join(found_keywords)}")
+            st.error(f"🚨 تحذير عالي الخطورة: الرابط يحتوي على كلمات مشبوهة تستخدم في التصيد: {', '.join(found_keywords)}")
         else:
             st.success("✅ لم يتم العثور على كلمات مشبوهة صريحة في نص الرابط.")
             
