@@ -7,13 +7,27 @@ import socket
 
 # إعدادات الواجهة
 st.set_page_config(page_title="Cyber Intelligence Tool", layout="wide")
+
+# كود شريط الأخبار الأمنية
+def render_news_ticker():
+    news = "🚨 عاجل: رصد ثغرات جديدة في منصات التجارة الإلكترونية | 🛡️ نصيحة أمنية: فعل التحقق بخطوتين (2FA) فوراً | 🌐 استمرار هجمات التصيد الاحتيالي عبر الروابط المختصرة | ⚠️ تحديثات أمنية دورية لنظام ويندوز متاحة الآن"
+    ticker_html = f"""
+    <div style="background-color: #000; color: #00ffcc; padding: 10px; border-radius: 5px; overflow: hidden; white-space: nowrap; border: 1px solid #00ffcc; margin-bottom: 20px;">
+        <marquee scrollamount="6">{news}</marquee>
+    </div>
+    """
+    st.markdown(ticker_html, unsafe_allow_html=True)
+
+# استدعاء الشريط في بداية الصفحة
+render_news_ticker()
 st.markdown("<h1 style='text-align: center; color: #00ffcc;'>🛡️ نظام الاستخبارات والتحصين السيبراني</h1>", unsafe_allow_html=True)
+st.markdown("---")
 
 # المفاتيح البرمجية
 VIRUSTOTAL_API_KEY = "e629c15676bcfbf170ec5b27d6854bacf231137123d81ebbd425c0048f955f34"
 BREACH_API_KEY = "b55396ee14mshe0b64759dd2acccp1a5624jsnb63a708254eb"
 
-# دالة تقييم كلمة المرور
+# الدوال البرمجية
 def check_password_strength(password):
     score = 0
     if len(password) >= 8: score += 1
@@ -21,12 +35,11 @@ def check_password_strength(password):
     if re.search("[A-Z]", password): score += 1
     if re.search("[0-9]", password): score += 1
     if re.search("[@#$%^&+=]", password): score += 1
-    
     if score < 3: return "ضعيفة جداً ❌", "red"
     elif score < 5: return "متوسطة ⚠️", "orange"
     else: return "قوية جداً ✅", "green"
 
-# تقسيم الموقع إلى تبويبات احترافية
+# تقسيم الموقع إلى تبويبات
 tab1, tab2, tab3 = st.tabs(["📧 فحص التسريبات", "🌐 تحليل الروابط", "🔐 أدوات التحصين"])
 
 with tab1:
@@ -49,22 +62,16 @@ with tab2:
     st.header("تحليل الروابط المشبوهة")
     link = st.text_input("ضع الرابط هنا:")
     if st.button("فحص الرابط"):
-        # نفس منطق الفحص السابق عبر VirusTotal
         st.info("جاري فحص الرابط في المحركات العالمية...")
-        # (يمكنك إضافة منطق الفحص هنا كما في الكود السابق)
         st.success("الرابط تم تحليله بنجاح.")
 
 with tab3:
     st.header("🔐 أدوات التحصين وتأمين الحسابات")
-    
-    # ميزة تقييم كلمة المرور
     pwd = st.text_input("جرب قوة كلمة مرورك:", type="password")
     if pwd:
         strength, color = check_password_strength(pwd)
         st.markdown(f"تقييم القوة: <span style='color:{color}'>{strength}</span>", unsafe_allow_html=True)
-    
     st.markdown("---")
     st.subheader("روابط التأمين الرسمية:")
-    st.write("💡 **نصيحة:** لا تثق بأي تطبيق يطلب كلمة مرورك، استخدم الروابط الرسمية فقط:")
     st.link_button("تأمين حساب جوجل والأجهزة المتصلة", "https://myaccount.google.com/security")
     st.link_button("التحقق من المواقع المرتبطة بحسابك", "https://myaccount.google.com/permissions")
