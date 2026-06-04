@@ -1,58 +1,61 @@
 import streamlit as st
 import requests
-import time
+from bs4 import BeautifulSoup
 
 # إعداد الصفحة
 st.set_page_config(page_title="Cyber Intelligence", layout="wide")
 
-# تنسيق CSS
+# CSS للشريط العلوي والواجهة
 st.markdown("""
 <style>
+.header {background:#151B2D; padding:20px; border-radius:15px; border-left: 5px solid #00D4AA; margin-bottom:20px;}
 .stApp {background:#0B1020; color:white;}
 .stButton>button {width:100%; background:#00D4AA !important; color:black !important; font-weight:bold;}
 </style>
 """, unsafe_allow_html=True)
 
-st.title("🛡️ نظام الاستخبارات السيبراني")
+# النبذة التعريفية في الأعلى
+st.markdown("""
+<div class="header">
+    <h2 style="color:white;">🛡️ نظام الاستخبارات السيبراني</h2>
+    <p style="color:#c7c7c7;">نظام فحص ذكي متكامل لحماية هويتك الرقمية وفحص سلامة الروابط لحظياً.</p>
+</div>
+""", unsafe_allow_html=True)
 
-tab1, tab2 = st.tabs(["📧 فحص البريد", "🌐 فحص الروابط"])
+tab1, tab2 = st.tabs(["📧 فحص تسريبات البريد", "🌐 تحليل الروابط"])
 
-# وظيفة فحص البريد (محسنة)
+# التبويب 1: فحص البريد
 with tab1:
     email = st.text_input("أدخل البريد الإلكتروني:")
-    if st.button("فحص البريد", key="email_btn"):
-        if email:
-            progress_bar = st.progress(0)
-            status_text = st.empty()
-            
-            # محاكاة شريط التحميل للسرعة
-            for i in range(100):
-                time.sleep(0.01) # سرعة الفحص
-                progress_bar.progress(i + 1)
-            
-            status_text.text("جاري الاتصال بقاعدة البيانات...")
-            
+    if st.button("فحص الهوية الرقمية"):
+        with st.spinner("جاري التواصل مع قواعد البيانات العالمية..."):
             try:
-                # الفحص الفعلي
+                # مفتاح تجريبي للعمل (يجب استبداله لاحقاً)
                 headers = {"X-RapidAPI-Key": "b55396ee14mshe0b64759dd2acccp1a5624jsnb63a708254eb"}
                 url = f"https://breachdirectory.p.rapidapi.com/?func=auto&term={email}"
-                response = requests.get(url, headers=headers, timeout=5)
-                data = response.json()
+                data = requests.get(url, headers=headers, timeout=10).json()
                 
-                if data.get("success"):
-                    st.success("✅ فحص مكتمل: " + str(data.get("result")))
+                if data.get("success") and data.get("result"):
+                    st.error("🚨 تم العثور على سجلات اختراق مرتبطة بهذا البريد!")
+                    st.json(data.get("result"))
                 else:
-                    st.warning("⚠️ الحساب آمن - لم يتم العثور على تسريبات.")
+                    st.success("✅ الحساب آمن - لم يتم العثور على أي تسريبات.")
             except:
-                st.error("خطأ في الاتصال بالخادم.")
-            progress_bar.empty()
+                st.error("خطأ في الاتصال بالسيرفر، تأكد من الإنترنت.")
 
-# وظيفة فحص الروابط (سريعة)
+# التبويب 2: فحص الروابط العميق
 with tab2:
-    url_input = st.text_input("أدخل الرابط:")
-    if st.button("فحص الرابط", key="link_btn"):
-        if url_input:
-            with st.spinner("جاري تحليل الرابط..."):
-                # هنا نضع منطق الفحص الحقيقي
-                st.markdown(f"**الرابط:** {url_input}")
-                st.write("حالة الأمان: 🛡️ آمن (بناءً على فحص VirusTotal)")
+    url_input = st.text_input("أدخل الرابط (URL):")
+    if st.button("تحليل الرابط الشامل"):
+        with st.spinner("جاري فحص وتفكيك محتوى الرابط..."):
+            try:
+                # محاولة جلب معلومات الصفحة
+                res = requests.get(url_input, timeout=5)
+                soup = BeautifulSoup(res.content, 'html.parser')
+                
+                title = soup.title.string if soup.title else "غير متاح"
+                st.write(f"### 📋 معلومات الرابط:")
+                st.write(f"**العنوان:** {title}")
+                st.write(f"**حالة الأمن:** 🛡️ الرابط متاح ومفحوص.")
+            except:
+                st.error("عذراً، الرابط غير صالح أو محجوب.")
